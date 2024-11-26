@@ -10,5 +10,6 @@
 
 ## ER-модель
 ![image](https://github.com/user-attachments/assets/d30f6628-36fa-4ff4-89f6-3f7dfb0c4fdc)
+![image](https://github.com/user-attachments/assets/0a791d0f-18bd-471b-a919-82a6bd55773f)
 
 ## UML-диаграмма
