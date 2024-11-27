@@ -12,4 +12,5 @@
 ![image](https://github.com/user-attachments/assets/8abc4895-4386-4650-82cb-3a58b450af47)
 
 ## UML-диаграмма
-![image](https://github.com/user-attachments/assets/3bdaff83-1343-44a7-bfa7-ee3daaf71254)
+![image](https://github.com/user-attachments/assets/fa6fa1cb-b818-4139-8337-87f2f3459698)
+
