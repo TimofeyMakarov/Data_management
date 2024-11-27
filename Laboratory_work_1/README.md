@@ -9,7 +9,7 @@
 | Необходимая для хранения информация   | - ID библиотеки<br> - Название<br> - Адрес<br> - Информация о каждой книге (её уникальный идентификатор, кол-во на складе, название, ID автора, ID библиотеки) и её авторе (ID и ФИО)| - ID читательского билета<br> - ФИО<br> - Адрес (для посылания писем в случае невозврата книги) |
 
 ## ER-модель
-![image](https://github.com/user-attachments/assets/e11e21a8-6dc0-4dea-a10f-9980d52791e5)
+![image](https://github.com/user-attachments/assets/8abc4895-4386-4650-82cb-3a58b450af47)
 
 ## UML-диаграмма
 ![image](https://github.com/user-attachments/assets/3bdaff83-1343-44a7-bfa7-ee3daaf71254)
