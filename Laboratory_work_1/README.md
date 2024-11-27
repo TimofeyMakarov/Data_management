@@ -11,6 +11,8 @@
 ## ER-модель
 ![image](https://github.com/user-attachments/assets/8abc4895-4386-4650-82cb-3a58b450af47)
 
-## UML-диаграмма
+## UML: диаграмма классов
 ![image](https://github.com/user-attachments/assets/5212e300-fcd4-409b-889b-c48e20f8df06)
 
+## UML: use-cases диаграмма
+![image](https://github.com/user-attachments/assets/7c2ffe7b-6446-498d-b7db-032854a45003)
