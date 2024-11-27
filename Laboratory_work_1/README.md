@@ -14,6 +14,6 @@
 ## UML: диаграмма классов
 ![image](https://github.com/user-attachments/assets/f49d1e7f-f502-4e5d-9464-16ddca972449)
 
-## UML: use-cases диаграмма
+## UML: use-case диаграмма
 ![image](https://github.com/user-attachments/assets/633966bd-768b-419e-875c-108d31a01484)
 
