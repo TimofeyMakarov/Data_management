@@ -17,3 +17,5 @@
 ## UML: use-case диаграмма
 ![image](https://github.com/user-attachments/assets/633966bd-768b-419e-875c-108d31a01484)
 
+## UNL: диаграмма последовательности
+![image](https://github.com/user-attachments/assets/2cba92d6-fbbd-44a7-a754-5c7c38a0d7cb)
