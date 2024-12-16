@@ -22,30 +22,27 @@
 ```SQL
 CREATE TABLE customer
 (
-	id INTEGER PRIMARY KEY,
+	id INTEGER PRIMARY KEY CHECK (id > 0),
 	surname TEXT NOT NULL,
 	address TEXT NOT NULL,
-	discount INTEGER NOT NULL,
-	CHECK (discount BETWEEN 0 AND 100)
+	discount INTEGER NOT NULL CHECK (discount BETWEEN 0 AND 100)
 );
 
 CREATE TABLE agent
 (
-	id INTEGER PRIMARY KEY,
+	id INTEGER PRIMARY KEY CHECK (id > 0),
 	surname TEXT NOT NULL,
 	city TEXT NOT NULL,
-	commission_fee INTEGER NOT NULL,
-	CHECK (commission_fee BETWEEN 0 AND 100)
+	commission_fee INTEGER NOT NULL CHECK (commission_fee BETWEEN 0 AND 100)
 );
 
 CREATE TABLE product
 (
-	id INTEGER PRIMARY KEY,
+	id INTEGER PRIMARY KEY CHECK (id > 0),
 	product_name TEXT NOT NULL,
-	price INTEGER NOT NULL,
+	price INTEGER NOT NULL CHECK (price > 0),
 	warehouse_city TEXT NOT NULL,
-	maximum_number INTEGER NOT NULL,
-	CHECK ((price > 0) AND (maximum_number > 0))
+	maximum_number INTEGER NOT NULL CHECK (maximum_number > 0)
 );
 
 CREATE TYPE Months AS ENUM 
@@ -64,14 +61,13 @@ CREATE TYPE Months AS ENUM
 
 CREATE TABLE purchase_presentation
 (
-	number INTEGER PRIMARY KEY,
+	number INTEGER PRIMARY KEY CHECK (number > 0),
 	date Months NOT NULL,
 	customer_id INTEGER NOT NULL,
 	agent_id INTEGER NOT NULL,
 	product_id INTEGER NOT NULL,
-	quantity INTEGER NOT NULL,
-	price INTEGER NOT NULL,
-	CHECK ((quantity > 0) AND (price > 0)),
+	quantity INTEGER NOT NULL CHECK (quantity > 0),
+	price INTEGER NOT NULL CHECK (price > 0),
 	FOREIGN KEY (customer_id) REFERENCES customer (id)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE,
@@ -87,7 +83,7 @@ CREATE TABLE purchase_presentation
 **Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/c6a6b257-ba0f-4388-8d5e-b1e327b36111)
 
 **Пояснения**:
-1) Тип для полей id и number был выбран INTEGER, так как это наиболее интуитивно подходящий тип для данного поля. Конечно, можно делать это поле текстового формата с тем расчётом, чтобы избежать проблемы переполнения, но строковые представления чисел весят иногда больше (например, число 2 млрд будет весить 4 байта в формате Integer, а строка "2.000.000.000" будет весить 10 байт) и придётся делать какую-то проверку на то, что данная строка именно число, а не что-то другое. Также для поля date в таблице purchase_presentation был создан тип Month.
+1) Тип для полей id и number был выбран INTEGER с условием на положительность, так как это наиболее интуитивно подходящий тип для данного поля. Конечно, можно делать это поле текстового формата с тем расчётом, чтобы избежать проблемы переполнения, но строковые представления чисел весят иногда больше (например, число 2 млрд будет весить 4 байта в формате Integer, а строка "2.000.000.000" будет весить 10 байт) и придётся делать какую-то проверку на то, что данная строка именно число, а не что-то другое. Также для поля date в таблице purchase_presentation был создан тип Month.
 2) Для всех полей установил ограничение NOT NULL (кроме первичных - там это требование заключено в ограничении PRIMARY KEY), потому что отстутствие той или иной информации может оказаться существенным для реальной модели (например, отстутвие указанного города для склада с товаром может повлечь за собой проблемы с доставкой).
 3) Установил минимальные требования корректности данных при помощи ограничения CHECK. Например, скидка не может быть больше 100% (просто в целях предотвращения каких-то очень грубых случайных ошибок при заполнении базы данных).
 4) Связал поля customer_id, agent_id, product_id с соответсвующими полями из таблиц customer, agent, product, а в качестве поведения изменений для каждого внешнего ключа было выбрано CASCADE для того, чтобы в случае изменения записей в основной таблице эти изменения отразились в точности и на записях связанных таблиц, точно также и удаление.
