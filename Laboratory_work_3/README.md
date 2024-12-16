@@ -45,7 +45,7 @@ CREATE TABLE product
 	price INTEGER NOT NULL,
 	warehouse_city TEXT NOT NULL,
 	maximum_number INTEGER NOT NULL,
-	CHECK (price > 0 )
+	CHECK ((price > 0) AND (maximum_number > 0))
 );
 
 CREATE TABLE purchase_presentation
@@ -58,9 +58,15 @@ CREATE TABLE purchase_presentation
 	quantity INTEGER NOT NULL,
 	price INTEGER NOT NULL,
 	CHECK ((quantity >= 0) AND (price > 0)),
-	FOREIGN KEY (customer_id) REFERENCES customer (id) ON DELETE CASCADE,
-	FOREIGN KEY (agent_id) REFERENCES agent (id) ON DELETE CASCADE,
-	FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE
+	FOREIGN KEY (customer_id) REFERENCES customer (id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+	FOREIGN KEY (agent_id) REFERENCES agent (id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+	FOREIGN KEY (product_id) REFERENCES product (id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
 );
 ```
 
