@@ -148,7 +148,7 @@ SELECT * FROM agent;
 SELECT * FROM product;
 SELECT * FROM purchase_presentation;
 ```
-**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/23c826b5-6276-4b0f-a1ca-971c0bf48e0c)
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/ff8eae8f-9403-4a22-9233-65f11a73a2bf)
 
 ## Задание №4
 **Формулировка**: 
