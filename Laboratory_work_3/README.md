@@ -277,6 +277,8 @@ WHERE id IN
 ```SQL
 UPDATE purchase_presentation
 SET price = price * (100 - (SELECT discount FROM customer WHERE customer.id = customer_id)) / 100;
+
+SELECT * FROM purchase_presentation;
 ```
 **Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/2a0e96ef-21c4-4b3e-81c0-b9ee062a336f)
 
