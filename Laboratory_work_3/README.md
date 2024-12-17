@@ -216,7 +216,7 @@ FROM purchase_presentation
 ## Задание №7
 **Формулировка**: *Вывести:<br>
 а) фамилии агентов, которые продавали вилки или у которых что-либо покупали покупатели своего города;<br>
-б) имена и адреса покупателей, покупавших предметы со ценой более 8000руб не ранее февраля месяца. Вывести вместе с фамилиями агентов, которые продали предмет, проиведя по ним сортировку;<br>
+б) имена и адреса покупателей, покупавших предметы с ценой более 8000 руб не ранее февраля месяца. Вывести вместе с фамилиями агентов, которые продали предмет, произведя по ним сортировку;<br>
 в) название и стоимость предметов, купленых Тукмаковой (Россиевым) у живущих в других городах агентов;<br>
 г) название и максимальное количество предметов, которые продавались более чем одним агентом.*
 
@@ -225,17 +225,50 @@ FROM purchase_presentation
 SELECT surname
 FROM agent
 WHERE (
-		EXISTS (SELECT * FROM purchase_presentation
-				JOIN product 
-				ON purchase_presentation.product_id = product.id
-				WHERE (purchase_presentation.agent_id = agent.id AND product_name = 'Вилка'))
-		OR EXISTS (SELECT * FROM purchase_presentation
-				JOIN customer
-				ON purchase_presentation.customer_id = customer.id
-				WHERE (purchase_presentation.agent_id = agent.id AND customer.city = agent.city))
-	  );
+	EXISTS (SELECT * FROM purchase_presentation
+		JOIN product 
+		ON purchase_presentation.product_id = product.id
+		WHERE (purchase_presentation.agent_id = agent.id AND product_name = 'Вилка'))
+	OR EXISTS (SELECT * FROM purchase_presentation
+		JOIN customer
+		ON purchase_presentation.customer_id = customer.id
+		WHERE (purchase_presentation.agent_id = agent.id AND customer.city = agent.city))
+      );
+
+SELECT number,
+	customer.surname AS customer_surname,
+	customer.city AS customer_city,
+	agent.surname AS agent_surname
+FROM purchase_presentation
+	JOIN customer
+		ON purchase_presentation.customer_id = customer.id
+	JOIN agent
+		ON purchase_presentation.agent_id = agent.id
+WHERE ((price > 8000) AND (date >= 'Февраль'))
+ORDER BY agent_surname;
+
+SELECT product_name, product.price AS price
+FROM purchase_presentation
+	JOIN customer
+		ON purchase_presentation.customer_id = customer.id
+	JOIN agent
+		ON purchase_presentation.agent_id = agent.id
+	JOIN product
+		ON purchase_presentation.product_id = product.id
+WHERE ((customer.surname = 'Россиев') AND (customer.city != agent.city));
+
+SELECT product_name FROM product
+WHERE id IN 
+	(
+	SELECT product_id
+	FROM purchase_presentation
+		JOIN product
+			ON purchase_presentation.product_id = product.id
+	GROUP BY product_id
+	HAVING COUNT(DISTINCT agent_id) > 1
+	);
 ```
-**Результат работы в СУБД**:
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/3a6fc6d9-6dcb-4aab-b434-42197d87d01b)
 
 ## Задание №8
 **Формулировка**: 
