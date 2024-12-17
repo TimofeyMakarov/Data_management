@@ -151,9 +151,18 @@ SELECT * FROM purchase_presentation;
 **Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/ff8eae8f-9403-4a22-9233-65f11a73a2bf)
 
 ## Задание №4
-**Формулировка**: 
+**Формулировка**: *Создать запросы для вывода:<br>
+а) всех различных фамилий покупателей и размеров их скидок;<br>
+б) всех различных мест проживания агентов;<br>
+в) всех названий товаров и мест их складирования*
+
 **Решение на SQL**:
-**Результат работы в СУБД**:
+```SQL
+SELECT surname, discount FROM customer;
+SELECT city FROM agent;
+SELECT product_name, warehouse_city FROM product;
+```
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/9fb226f2-9fbf-4e04-b4f4-982ebb739998)
 
 ## Задание №5
 **Формулировка**: 
