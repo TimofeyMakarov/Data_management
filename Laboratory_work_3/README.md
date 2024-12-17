@@ -24,7 +24,7 @@ CREATE TABLE customer
 (
 	id INTEGER PRIMARY KEY CHECK (id > 0),
 	surname TEXT NOT NULL,
-	address TEXT NOT NULL,
+	city TEXT NOT NULL,
 	discount INTEGER NOT NULL CHECK (discount BETWEEN 0 AND 100)
 );
 
@@ -80,7 +80,7 @@ CREATE TABLE purchase_presentation
 );
 ```
 
-**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/ae1c2ff6-0d2e-4c1f-8070-3da5b75b4d62)
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/9c36bb72-4334-4f36-8b6b-1a4bf1156b1a)
 
 **Пояснения**:
 1) Тип для полей id и number был выбран INTEGER с условием на положительность, так как это наиболее интуитивно подходящий тип для данного поля. Конечно, можно делать это поле текстового формата с тем расчётом, чтобы избежать проблемы переполнения, но строковые представления чисел весят иногда больше (например, число 2 млрд будет весить 4 байта в формате Integer, а строка "2.000.000.000" будет весить 10 байт) и придётся делать какую-то проверку на то, что данная строка именно число, а не что-то другое. Также для поля date в таблице purchase_presentation был создан тип Month.
@@ -148,7 +148,7 @@ SELECT * FROM agent;
 SELECT * FROM product;
 SELECT * FROM purchase_presentation;
 ```
-**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/ff8eae8f-9403-4a22-9233-65f11a73a2bf)
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/5e5ccc89-f0c9-4696-9fc6-98ec1ae6607d)
 
 ## Задание №4
 **Формулировка**: *Создать запросы для вывода:<br>
@@ -172,7 +172,11 @@ SELECT product_name, warehouse_city FROM product;
 
 **Решение на SQL**:
 ```SQL
-
+SELECT surname, discount FROM
+(
+SELECT surname, discount, city FROM customer
+WHERE ((city IN ('Москва', 'Санкт-Петербург')) OR (surname LIKE '%ев'))
+);
 ```
 **Результат работы в СУБД**:
 
