@@ -179,19 +179,62 @@ SELECT number, date, quantity, price FROM purchase_presentation
 WHERE price < 10000
 ORDER BY price;
 
-SELECT product_name, wasehouse_city FROM product
+SELECT product_name, warehouse_city FROM product
 WHERE maximum_number >= 10;
 ```
 **Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/5a36632f-9b6e-4577-a0de-138c060f7132)
 
 ## Задание №6
-**Формулировка**: 
+**Формулировка**: *На основании данных о презентациях вывести все данные в таком формате:<br>
+а) номер, дата, фамилия покупателя, фамилия агента, дата. Отсортировать по первым двум полям;<br>
+б) фамилия покупателя, название товара, количество.*
+
 **Решение на SQL**:
-**Результат работы в СУБД**:
+```SQL
+SELECT number, 
+	date, 
+	customer.surname AS customer_surname, 
+	agent.surname AS agent_surname
+FROM purchase_presentation 
+	JOIN customer 
+		ON (purchase_presentation.customer_id = customer.id)
+	JOIN agent 
+		ON (purchase_presentation.agent_id = agent.id)
+ORDER BY number, date;
+
+SELECT surname AS customer_surname,
+	product_name,
+	quantity
+FROM purchase_presentation
+	JOIN customer
+		ON purchase_presentation.customer_id = customer.id
+	JOIN product
+		ON purchase_presentation.product_id = product.id;
+```
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/4d34f447-e90a-468f-8571-8d4957355f43)
 
 ## Задание №7
-**Формулировка**: 
+**Формулировка**: *Вывести:<br>
+а) фамилии агентов, которые продавали вилки или у которых что-либо покупали покупатели своего города;<br>
+б) имена и адреса покупателей, покупавших предметы со ценой более 8000руб не ранее февраля месяца. Вывести вместе с фамилиями агентов, которые продали предмет, проиведя по ним сортировку;<br>
+в) название и стоимость предметов, купленых Тукмаковой (Россиевым) у живущих в других городах агентов;<br>
+г) название и максимальное количество предметов, которые продавались более чем одним агентом.*
+
 **Решение на SQL**:
+```SQL
+SELECT surname
+FROM agent
+WHERE (
+		EXISTS (SELECT * FROM purchase_presentation
+				JOIN product 
+				ON purchase_presentation.product_id = product.id
+				WHERE (purchase_presentation.agent_id = agent.id AND product_name = 'Вилка'))
+		OR EXISTS (SELECT * FROM purchase_presentation
+				JOIN customer
+				ON purchase_presentation.customer_id = customer.id
+				WHERE (purchase_presentation.agent_id = agent.id AND customer.city = agent.city))
+	  );
+```
 **Результат работы в СУБД**:
 
 ## Задание №8
