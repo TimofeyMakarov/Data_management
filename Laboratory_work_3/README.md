@@ -271,9 +271,14 @@ WHERE id IN
 **Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/3a6fc6d9-6dcb-4aab-b434-42197d87d01b)
 
 ## Задание №8
-**Формулировка**: 
-**Решение на SQL**:
-**Результат работы в СУБД**:
+**Формулировка**: *Создать запрос для модификации всех значений столбца со стоимостью покупки таблицы покупка/презентация, чтобы он содержал истинную сумму, оплачиваемую покупателем ( с учетом скидки). Вывести новые значения.*
+
+**Решение на SQL**: 
+```SQL
+UPDATE purchase_presentation
+SET price = price * (100 + (SELECT discount FROM customer WHERE customer.id = customer_id)) / 100;
+```
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/2a0e96ef-21c4-4b3e-81c0-b9ee062a336f)
 
 ## Задание №9
 **Формулировка**: 
