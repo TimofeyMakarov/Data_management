@@ -167,18 +167,22 @@ SELECT product_name, warehouse_city FROM product;
 ## Задание №5
 **Формулировка**: *Создав запрос получить следующую информацию:<br>
 а) фамилии и размер скидки покупателей, проживающих в Москве и С.-Петербурге или тех, чьи фамилии оканчиваются на “ев”;<br>
-б) номер, дата презентации, количество товара и  стоимость покупки для тех записей, где стоимость составила менее 10000руб. Отсортировать по возрастанию стоимости;<br>
+б) номер, дату презентации, количество товара и стоимость покупки для тех записей, где стоимость составила менее 10000 руб. Отсортировать по возрастанию стоимости;<br>
 в) названия товара и адрес складирования, для товаров, оставшихся в количестве не менее 10.*
 
 **Решение на SQL**:
 ```SQL
-SELECT surname, discount FROM
-(
-SELECT surname, discount, city FROM customer
-WHERE ((city IN ('Москва', 'Санкт-Петербург')) OR (surname LIKE '%ев'))
-);
+SELECT surname, discount FROM customer
+WHERE ((city IN ('Москва', 'Санкт-Петербург')) OR (surname LIKE '%ев'));
+
+SELECT number, date, quantity, price FROM purchase_presentation
+WHERE price < 10000
+ORDER BY price;
+
+SELECT product_name, wasehouse_city FROM product
+WHERE maximum_number >= 10;
 ```
-**Результат работы в СУБД**:
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/5a36632f-9b6e-4577-a0de-138c060f7132)
 
 ## Задание №6
 **Формулировка**: 
