@@ -283,7 +283,8 @@ SELECT * FROM purchase_presentation;
 **Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/2a0e96ef-21c4-4b3e-81c0-b9ee062a336f)
 
 ## Задание №9
-**Формулировка**: 
+**Формулировка**: *Расширить таблицу с данными о покупках столбцом, содержащим величину взимаемых комиссионых. Создать запрос для ввода конкретных значений во все строки таблицы покупок/презентаций.*
+
 **Решение на SQL**:
 ```SQL
 ALTER TABLE purchase_presentation ADD commission_fee INTEGER;
