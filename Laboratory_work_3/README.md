@@ -285,7 +285,13 @@ SELECT * FROM purchase_presentation;
 ## Задание №9
 **Формулировка**: 
 **Решение на SQL**:
-**Результат работы в СУБД**:
+```SQL
+ALTER TABLE purchase_presentation ADD commission_fee INTEGER;
+
+UPDATE purchase_presentation
+SET commission_fee = price * (SELECT commission_fee FROM agent WHERE agent.id = agent_id) / 100;
+```
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/db23da57-54f1-4bf4-ad4c-eb5c3a528691)
 
 ## Задание №10
 **Формулировка**: 
