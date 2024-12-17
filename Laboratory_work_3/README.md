@@ -148,7 +148,7 @@ SELECT * FROM agent;
 SELECT * FROM product;
 SELECT * FROM purchase_presentation;
 ```
-**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/5e5ccc89-f0c9-4696-9fc6-98ec1ae6607d)
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/ae31f478-106b-4ad0-8373-46fbb05a6ca3)
 
 ## Задание №4
 **Формулировка**: *Создать запросы для вывода:<br>
@@ -158,11 +158,11 @@ SELECT * FROM purchase_presentation;
 
 **Решение на SQL**:
 ```SQL
-SELECT surname, discount FROM customer;
-SELECT city FROM agent;
+SELECT DISTINCT surname, discount FROM customer;
+SELECT DISTINCT city FROM agent;
 SELECT product_name, warehouse_city FROM product;
 ```
-**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/9fb226f2-9fbf-4e04-b4f4-982ebb739998)
+**Результат работы в СУБД**: ![image](https://github.com/user-attachments/assets/216f7352-01ad-4d2b-81a9-b3b9882fddae)
 
 ## Задание №5
 **Формулировка**: *Создав запрос получить следующую информацию:<br>
