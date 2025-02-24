@@ -1,0 +1,78 @@
+-----------------------------------------------------------------------------------------------------------------
+1
+
+CREATE FUNCTION restOfTheProductByName (IN product_name TEXT)
+RETURNS INT
+AS $$
+DECLARE
+    product_id INT;
+    count_shop INT;
+    count_warehouse INT;
+BEGIN
+    SELECT id INTO product_id FROM good WHERE name = product_name;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Продукт не найден';
+    END IF;
+    SELECT SUM(count) INTO count_shop FROM Good_Shop WHERE id_good = product_id;
+    SELECT SUM(count) INTO count_warehouse FROM Good_Warehouse WHERE id_good = product_id;
+    RETURN count_shop + count_warehouse;
+END;
+$$ LANGUAGE plpgsql;
+
+-----------------------------------------------------------------------------------------------------------------
+2
+
+CREATE FUNCTION availabilityForPurchaseByAge (IN product_name TEXT, IN buyer_age INT)
+RETURNS BOOLEAN
+AS $$
+DECLARE
+    category_id INT;
+    min_age INT;
+BEGIN
+    SELECT id_goodCategory INTO category_id FROM good WHERE name = product_name;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Продукт не найден';
+    END IF;
+    IF category_id IS NULL THEN
+        RAISE EXCEPTION 'Продукт не относится ни к какой категории';
+    END IF;
+    SELECT ageMin INTO min_age FROM GoodCategory WHERE id = category_id;
+    IF min_age <= buyer_age OR min_age IS NULL THEN
+        RAISE INFO 'Покупатель соответствует возрастной категории товара';
+        RETURN TRUE;
+    ELSE
+        RAISE INFO 'Покупатель не соответствует возрастной категории товара';
+        RETURN FALSE;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-----------------------------------------------------------------------------------------------------------------
+3
+
+CREATE FUNCTION availabilityForPurchaseByQuantityAndAge (IN product_name TEXT, IN quantity INT, IN buyer_age INT)
+RETURNS BOOLEAN
+AS $$
+DECLARE
+    product_id INT;
+    category_id INT;
+    count_shop INT;
+    count_warehouse INT;
+    total_count INT;
+BEGIN
+    SELECT id, id_goodCategory INTO product_id, category_id FROM good WHERE name = product_name;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Продукт не найден';
+    END IF;
+    SELECT SUM(count) INTO count_shop FROM Good_Shop WHERE id_good = product_id;
+    SELECT SUM(count) INTO count_warehouse FROM Good_Warehouse WHERE id_good = product_id;
+    total_count = count_shop + count_warehouse;
+    IF total_count >= quantity AND availabilityForPurchaseByAge(product_name, buyer_age) THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-----------------------------------------------------------------------------------------------------------------

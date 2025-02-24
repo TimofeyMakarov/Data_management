@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------------------------------------------
+1
+
+CREATE OR REPLACE FUNCTION restOfTheProductByName (IN product_name TEXT)
+RETURNS INT
+AS $$
+DECLARE
+    count_product INT;
+    result_count_product INT;
+    curs1 CURSOR (name_of_product TEXT) FOR (SELECT count 
+                               	 	     FROM Good_Shop 
+					     JOIN Good
+					     ON (Good.id = Good_Shop.id_good)
+					     WHERE name = name_of_product);
+    curs2 REFCURSOR;
+BEGIN
+    PERFORM * FROM Good WHERE name = product_name;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Продукт не найден';
+    END IF;
+    result_count_product = 0;
+    OPEN curs1 (product_name);
+    LOOP
+	FETCH NEXT FROM curs1 INTO count_product;
+	IF NOT FOUND THEN EXIT; END IF;
+	result_count_product = result_count_product + count_product;
+    END LOOP;
+    CLOSE curs1;
+    OPEN curs2 FOR (SELECT count 
+	            FROM Good_Warehouse 
+		    JOIN Good
+		    ON (Good.id = Good_Warehouse.id_good)
+		    WHERE name = product_name);
+    LOOP
+	FETCH NEXT FROM curs2 INTO count_product;
+	IF NOT FOUND THEN EXIT; END IF;
+	result_count_product = result_count_product + count_product;
+    END LOOP;
+    CLOSE curs2;
+    RETURN result_count_product;
+END;
+$$ LANGUAGE plpgsql;
+
+-----------------------------------------------------------------------------------------------------------------
+2
+
+В разработке...
+
+-----------------------------------------------------------------------------------------------------------------
+3
+
+В разработке...

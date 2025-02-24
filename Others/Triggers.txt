@@ -1,0 +1,79 @@
+----------------------------------------------------------------------------------------------------
+1
+
+CREATE OR REPLACE VIEW generalInformationAboutQuantityOfGoods(id, name, count_warehouse, count_shop)
+AS SELECT Good.id, Good.name, count_warehouse, count_shop
+ FROM Good FULL JOIN
+  (SELECT Good.id as id, sum(Good_Warehouse.count) as count_warehouse
+  FROM Good FULL JOIN Good_Warehouse ON Good.id = Good_Warehouse.id_good 
+  GROUP BY Good.id)
+ USING (id) FULL JOIN
+  (SELECT Good.id as id, sum(Good_Shop.count) as count_shop
+  FROM Good FULL JOIN Good_Shop ON Good.id = Good_Shop.id_good 
+  GROUP BY Good.id)
+ USING (id)
+
+----------------------------------------------------------------------------------------------------
+2
+
+CREATE OR REPLACE FUNCTION onUpdateToGeneralInformationAboutQuantityOfGoods ( )
+RETURNS TRIGGER
+AS $$
+DECLARE my_value INT; my_id INT;
+BEGIN
+ IF NEW.count_warehouse < 0 THEN
+  RAISE EXCEPTION 'Значение count_warehouse должно >= 0';
+ END IF;
+ IF NEW.count_warehouse < OLD.count_warehouse THEN
+  SELECT max(count) INTO my_value FROM Good_Warehouse WHERE id_good = NEW.id;
+  SELECT id_warehouse INTO my_id FROM Good_Warehouse WHERE id_good = NEW.id AND count = my_value;
+  UPDATE Good_Warehouse SET count = my_value - (OLD.count_warehouse - NEW.count_warehouse)
+  WHERE id_warehouse = my_id AND id_good = NEW.id;
+ END IF;
+ IF NEW.count_warehouse > OLD.count_warehouse THEN
+  SELECT min(count) INTO my_value FROM Good_Warehouse WHERE id_good = NEW.id;
+  SELECT id_warehouse INTO my_id FROM Good_Warehouse WHERE id_good = NEW.id AND count = my_value;
+  UPDATE Good_Warehouse SET count = my_value + (NEW.count_warehouse - OLD.count_warehouse)
+  WHERE id_warehouse = my_id AND id_good = NEW.id;
+ END IF;
+ RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER onUpdateToGeneralInformationAboutQuantityOfGoodsTrigger
+INSTEAD OF UPDATE ON generalInformationAboutQuantityOfGoods
+FOR EACH ROW EXECUTE FUNCTION onUpdateToGeneralInformationAboutQuantityOfGoods ();
+
+----------------------------------------------------------------------------------------------------
+3
+
+CREATE OR REPLACE FUNCTION onInsertToGeneralInformationAboutQuantityOfGoods ( )
+RETURNS TRIGGER
+AS $$
+DECLARE my_id INT;
+BEGIN
+ IF NEW.count_warehouse < 0 THEN
+  RAISE EXCEPTION 'Значение count_warehouse должно >= 0';
+ END IF;
+ PERFORM * FROM Good WHERE id = NEW.id;
+ IF FOUND THEN
+  RAISE EXCEPTION 'Товар с таким id уже существует';
+ END IF;
+ PERFORM * FROM Good WHERE name = NEW.name;
+ IF FOUND THEN
+  RAISE EXCEPTION 'Товар с таким наименованием уже существует';
+ END IF;
+ 
+ INSERT INTO Good (id, name) VALUES (New.id, New.name);
+ SELECT id_warehouse INTO my_id FROM Good_Warehouse;
+ INSERT INTO Good_Warehouse VALUES (New.id, my_id, New.count_warehouse);
+ 
+ RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER onUInsertToGeneralInformationAboutQuantityOfGoodsTrigger
+INSTEAD OF INSERT ON generalInformationAboutQuantityOfGoods
+FOR EACH ROW EXECUTE FUNCTION onInsertToGeneralInformationAboutQuantityOfGoods ();
+
+----------------------------------------------------------------------------------------------------
