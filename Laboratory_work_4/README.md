@@ -93,6 +93,27 @@ FOR EACH ROW EXECUTE FUNCTION onInsertPurchasePresentation ();
 **Формулировка**: *Реализовать триггер такой, что при вводе строки в таблице покупок, если стоимость не указана, то она вычисляется*
 
 **Решение на SQL**:
+```SQL
+CREATE OR REPLACE FUNCTION onInsertWithoutPriceToPurchasePresentation()
+RETURNS TRIGGER
+AS $$
+DECLARE proguct_price INT;
+BEGIN
+    IF NEW.price IS NULL THEN
+        SELECT price INTO proguct_price FROM product WHERE id = NEW.id;
+        IF proguct_price IS NULL THEN
+            RAISE EXCEPTION 'Товара с указанным id не существует';
+        END IF;
+        NEW.price = NEW.quantity * proguct_price;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER onInsertWithoutPriceToPurchasePresentationTrigger
+BEFORE INSERT ON purchase_presentation
+FOR EACH ROW EXECUTE FUNCTION onInsertWithoutPriceToPurchasePresentation();
+```
 
 **Результат работы в СУБД**:
 
