@@ -123,5 +123,35 @@ FOR EACH ROW EXECUTE FUNCTION onInsertWithoutPriceToPurchasePresentation();
 **Формулировка**: *Создать представление (view), содержащее поля: № и дата презентации, фамилии агента и покупателя, скидка и стоимость покупки. Обеспечить возможность изменения предоставленной скидки. При этом должна быть пересчитана стоимость.*
 
 **Решение на SQL**:
+```SQL
+CREATE OR REPLACE VIEW purchasePresentationInformation 
+(number, date, agent_surname, customer_surname, discount, price) AS (
+    SELECT number, date, agent.surname, customer.surname, discount, purchase_presentation.price
+    FROM purchase_presentation 
+        JOIN agent ON (purchase_presentation.agent_id = agent.id)
+        JOIN customer ON (purchase_presentation.customer_id = customer.id)
+    );
+
+CREATE OR REPLACE FUNCTION onUpdateToPurchasePresentationInformation()
+RETURNS TRIGGER
+AS $$
+DECLARE id_of_customer INT;
+BEGIN
+    IF NEW.discount IS DISTINCT FROM OLD.discount THEN
+        SELECT customer_id INTO id_of_customer FROM purchase_presentation WHERE number = NEW.number;
+        UPDATE customer SET discount = NEW.discount WHERE id = id_of_customer;
+        UPDATE purchase_presentation SET price = price / (100 - OLD.discount) * (100 - NEW.discount)
+               WHERE customer_id = id_of_customer;
+    ELSE RAISE EXCEPTION 'Можно обновить только значение поля discount';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER onUpdateToPurchasePresentationInformationTrigger
+INSTEAD OF UPDATE ON purchasePresentationInformation
+FOR EACH ROW EXECUTE FUNCTION onUpdateToPurchasePresentationInformation();
+```
 
 **Результат работы в СУБД**:
+![image](https://github.com/user-attachments/assets/9257e159-2306-421e-b9d3-8cbfb94cde95)
