@@ -27,7 +27,7 @@ BEGIN
                        'Дата: '        || recval.date        || '; ' ||
                        'Покупатель: '  || recval.customer_id || '; ' ||
                        'Цена: '        || recval.price;
-    ELSE information := 'Данный агент ничего не продал';
+    ELSE information := 'Записей о продажах агента с таким id не было найдено';
     END IF;
     CLOSE curs;
     RETURN information;
@@ -36,14 +36,58 @@ $$ LANGUAGE plpgsql;
 ```
 
 **Результат работы в СУБД**:
-![image](https://github.com/user-attachments/assets/f8b53ba7-2bca-4d81-88f8-1d9ef6fe1f99)
+![image](https://github.com/user-attachments/assets/f48f3c24-649a-4c94-91bc-3aa3b20c1324)
 
 ## Задание 2
 **Формулировка**: *Добавить таблицу, содержащую списки товаров у каждого агента. При вводе покупки проверять наличие товара у данного агента.*
 
 **Решение на SQL**:
+```SQL
+-- Добавление таблицы
+CREATE TABLE products_of_agent
+(
+	agent_id INTEGER PRIMARY KEY REFERENCES agent (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	list_of_products TEXT
+);
+
+INSERT INTO products_of_agent VALUES
+	(1, 'Кастрюля 1л., Блюдо, Нож'),
+	(2, 'Нож, Вилка, Тарелка'),
+	(3, 'Кастрюля 2л.'),
+	(4, 'Блюдо, Сковорода'),
+	(5, 'Кастрюля 1л., Кастрюля 2л., Тарелка'),
+	(6, 'Вилка, Сковорода');
+
+-- Создание триггера для проверки наличия товаров у соответствующих агентов
+CREATE OR REPLACE FUNCTION onInsertPurchasePresentation ()
+RETURNS TRIGGER
+AS $$
+DECLARE product_list TEXT; name_of_product TEXT;
+BEGIN
+    PERFORM * FROM agent WHERE id = NEW.agent_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Агента с таким id не существует';
+	END IF;
+	SELECT product_name INTO name_of_product FROM product WHERE (id = NEW.product_id);
+	IF name_of_product IS NULL THEN
+        RAISE EXCEPTION 'Товара с таким id не существует';
+	END IF;
+    SELECT list_of_products INTO product_list
+        FROM products_of_agent WHERE agent_id = NEW.agent_id;
+    IF product_list NOT LIKE '%' || name_of_product || '%' THEN
+        RAISE EXCEPTION 'В списке товаров агента с заданным id не указано такого товара';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER onInsertPurchasePresentationTrigger
+BEFORE INSERT ON purchase_presentation
+FOR EACH ROW EXECUTE FUNCTION onInsertPurchasePresentation ();
+```
 
 **Результат работы в СУБД**:
+![image](https://github.com/user-attachments/assets/224febba-3645-46dd-b2a3-3c688742828e)
 
 ## Задание 3
 **Формулировка**: *Реализовать триггер такой, что при вводе строки в таблице покупок, если стоимость не указана, то она вычисляется*
