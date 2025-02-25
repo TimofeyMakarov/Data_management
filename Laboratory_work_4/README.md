@@ -67,11 +67,11 @@ BEGIN
     PERFORM * FROM agent WHERE id = NEW.agent_id;
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Агента с таким id не существует';
-	END IF;
-	SELECT product_name INTO name_of_product FROM product WHERE (id = NEW.product_id);
-	IF name_of_product IS NULL THEN
+    END IF;
+    SELECT product_name INTO name_of_product FROM product WHERE (id = NEW.product_id);
+    IF name_of_product IS NULL THEN
         RAISE EXCEPTION 'Товара с таким id не существует';
-	END IF;
+    END IF;
     SELECT list_of_products INTO product_list
         FROM products_of_agent WHERE agent_id = NEW.agent_id;
     IF product_list NOT LIKE '%' || name_of_product || '%' THEN
