@@ -36,7 +36,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 **Результат работы в СУБД**:
-![image](https://github.com/user-attachments/assets/ea5fbf66-7d4a-40f1-bb20-9720a4183ec6)
+![image](https://github.com/user-attachments/assets/f8b53ba7-2bca-4d81-88f8-1d9ef6fe1f99)
 
 ## Задание 2
 **Формулировка**: *Добавить таблицу, содержащую списки товаров у каждого агента. При вводе покупки проверять наличие товара у данного агента.*
