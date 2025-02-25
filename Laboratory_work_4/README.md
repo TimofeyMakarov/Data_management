@@ -100,11 +100,12 @@ AS $$
 DECLARE proguct_price INT;
 BEGIN
     IF NEW.price IS NULL THEN
-        SELECT price INTO proguct_price FROM product WHERE id = NEW.id;
+        SELECT price INTO proguct_price FROM product WHERE id = NEW.product_id;
         IF proguct_price IS NULL THEN
             RAISE EXCEPTION 'Товара с указанным id не существует';
         END IF;
-        NEW.price = NEW.quantity * proguct_price;
+        NEW.price = (NEW.quantity * proguct_price) * 
+                    (100 - (SELECT discount FROM customer WHERE customer.id = NEW.customer_id)) / 100;
     END IF;
     RETURN NEW;
 END;
@@ -116,6 +117,7 @@ FOR EACH ROW EXECUTE FUNCTION onInsertWithoutPriceToPurchasePresentation();
 ```
 
 **Результат работы в СУБД**:
+![image](https://github.com/user-attachments/assets/f8656f25-27aa-4f8e-a7ac-1faed247c4c7)
 
 ## Задание 4
 **Формулировка**: *Создать представление (view), содержащее поля: № и дата презентации, фамилии агента и покупателя, скидка и стоимость покупки. Обеспечить возможность изменения предоставленной скидки. При этом должна быть пересчитана стоимость.*
